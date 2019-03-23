@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@abt-database01.ctu4alxm7jpb.eu-central-1.rds.amazonaws.com:1521:AFTDB01
+    username: adibartom
+    password: adibartom
