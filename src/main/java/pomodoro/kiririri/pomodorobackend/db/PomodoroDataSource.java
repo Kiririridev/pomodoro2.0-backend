@@ -1,4 +1,4 @@
-package pomodoro.kiririri.pomodorobackend;
+package pomodoro.kiririri.pomodorobackend.db;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

@@ -1,9 +1,9 @@
-package pomodoro.kiririri.pomodorobackend;
+package pomodoro.kiririri.pomodorobackend.dto;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
 
 @Entity
 @Table(name = "POMODOROS")
@@ -12,11 +12,9 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Pomodoro
-{
-
+public class Pomodoro {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column
 	private int pomodoroId;
 	@Column
@@ -27,4 +25,6 @@ public class Pomodoro
 	private int length;
 	@Column
 	private String description;
+	@Column
+	private String tag;
 }
