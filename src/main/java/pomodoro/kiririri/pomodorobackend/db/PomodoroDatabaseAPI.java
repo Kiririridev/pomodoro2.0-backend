@@ -8,6 +8,7 @@ import pomodoro.kiririri.pomodorobackend.dto.Pomodoro;
 import pomodoro.kiririri.pomodorobackend.rowmappers.PomodoroRowMapper;
 
 import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
 import java.util.List;
 
 @Component
@@ -24,9 +25,8 @@ public class PomodoroDatabaseAPI {
 	private String password;
 
 	@Autowired
+	private DataSource pomodoroDataSource;
 	private JdbcTemplate jdbcTemplate;
-	@Autowired
-	private PomodoroDataSource pomodoroDataSource;
 
 	@PostConstruct
 	public void init() {
@@ -44,8 +44,13 @@ public class PomodoroDatabaseAPI {
 	}
 
 	public List<Pomodoro> selectAllPomodorosFromDatabase() {
+
 		List<Pomodoro> pomodoros = jdbcTemplate.query(SELECT_POMODOROS, new PomodoroRowMapper());
 
 		return pomodoros;
+	}
+
+	JdbcTemplate getJdbcTemplate() {
+		return jdbcTemplate;
 	}
 }
