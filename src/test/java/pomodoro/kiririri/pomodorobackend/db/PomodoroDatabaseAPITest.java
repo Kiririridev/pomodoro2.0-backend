@@ -39,6 +39,25 @@ public class PomodoroDatabaseAPITest {
 				countRowsInTable(databaseAPI.getJdbcTemplate(), POMODOROS_TABLE));
 	}
 
+	@Test
+	public void shouldSelectPomodorosFromDatabase() {
+
+		Pomodoro pomodoro = databaseAPI.selectAllPomodorosFromDatabase().get(0);
+
+		assertSelectedPomodoro(pomodoro);
+	}
+
+	private void assertSelectedPomodoro(Pomodoro pomodoro) {
+		assertEquals(
+				"test", pomodoro.getUserId());
+		assertEquals(
+				"sample", pomodoro.getDescription());
+		assertEquals(
+				4, pomodoro.getLength());
+		assertEquals(
+				"TEST", pomodoro.getTag());
+	}
+
 	private Pomodoro createSamplePomodoro() {
 
 		return new Pomodoro(1, "test", new Date(currentTimeMillis()), 1, "test", "TEST");
