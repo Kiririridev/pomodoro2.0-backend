@@ -11,7 +11,7 @@ import pomodoro.kiririri.pomodorobackend.dto.Pomodoro;
 import java.util.List;
 
 @RestController
-public class PomodoroPostController {
+public class PomodoroBasicRestController {
 
 	@Autowired
 	private PomodoroDatabaseAPI databaseAPI;

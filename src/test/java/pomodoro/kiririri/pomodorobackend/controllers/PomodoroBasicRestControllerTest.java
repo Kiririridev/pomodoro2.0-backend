@@ -33,13 +33,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(
-		webEnvironment = WebEnvironment.RANDOM_PORT,
+		webEnvironment = WebEnvironment.MOCK,
 		classes = {
-				PomodoroPostController.class,
+				PomodoroBasicRestController.class,
 				PomodoroBackendApplication.class})
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-public class PomodoroPostControllerTest {
+public class PomodoroBasicRestControllerTest {
 
 	private static final String POMODOROGET_ENDPOINT = "/pomodoroget";
 	private static final String POMODOROPOST_ENDPOINT = "/pomodoropost";
@@ -61,28 +61,31 @@ public class PomodoroPostControllerTest {
 	@Test
 	public void shouldCallDatabaseAPIOnPOST() throws Exception {
 
-		mockPomodoroDatabaseAPIForPOST();
+		doNothing().when(databaseAPI).persistPomodoroInDatabase(any(Pomodoro.class));
 
 		performPOST();
 
-		verifyIfDatabaseAPIPersistWasCalled();
+		verify(databaseAPI).persistPomodoroInDatabase(any(Pomodoro.class));
 	}
 
 	@Test
 	public void shouldCallDatabaseAPIOnGETAndReturnList() throws Exception {
 
-		mockDatabaseAPIForGET();
+		List<Pomodoro> pomodoros = createPomodorosList();
+		when(databaseAPI.selectAllPomodorosFromDatabase()).thenReturn(pomodoros);
 
 		MockHttpServletResponse response = performGET();
 
-		assertResultAfterGET(response);
+		verify(databaseAPI).selectAllPomodorosFromDatabase();
+		assertThatContentContainsID(response, ID_1);
+		assertThatContentContainsID(response, ID_2);
 	}
 
 	private void performPOST() throws Exception {
 
 		MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
 				.post(POMODOROPOST_ENDPOINT)
-				.header("Content-Type", APPLICATION_JSON.toString())
+				.header("Content-Type", APPLICATION_JSON.toString(), "charset=utf8")
 				.content(getJsonString());
 
 		mockMVC.perform(requestBuilder)
@@ -97,26 +100,11 @@ public class PomodoroPostControllerTest {
 		return mockMVC.perform(requestBuilder).andReturn().getResponse();
 	}
 
-	private void assertResultAfterGET(MockHttpServletResponse response) throws UnsupportedEncodingException {
-
-		verifyIfDatabaseAPISelectWasCalledWith();
-
-		assertThatContentContainsID(response, ID_1);
-		assertThatContentContainsID(response, ID_2);
-	}
-
 	private void assertThatContentContainsID(MockHttpServletResponse response, int id) throws UnsupportedEncodingException {
 
 		assertThat(response.getContentAsString())
 				.containsSequence(
 						format(POMODORO_ID_JSON_FORMAT, id));
-	}
-
-	private void mockDatabaseAPIForGET() {
-
-		List<Pomodoro> pomodoros = createPomodorosList();
-
-		when(databaseAPI.selectAllPomodorosFromDatabase()).thenReturn(pomodoros);
 	}
 
 	private List<Pomodoro> createPomodorosList() {
@@ -133,17 +121,5 @@ public class PomodoroPostControllerTest {
 
 	private String getJsonString() throws JSONException {
 		return testJSONProvider.getSamplePostRequest().toString();
-	}
-
-	private void verifyIfDatabaseAPIPersistWasCalled() {
-		verify(databaseAPI).persistPomodoroInDatabase(any(Pomodoro.class));
-	}
-
-	private void verifyIfDatabaseAPISelectWasCalledWith() {
-		verify(databaseAPI).selectAllPomodorosFromDatabase();
-	}
-
-	private void mockPomodoroDatabaseAPIForPOST() {
-		doNothing().when(databaseAPI).persistPomodoroInDatabase(any(Pomodoro.class));
 	}
 }
